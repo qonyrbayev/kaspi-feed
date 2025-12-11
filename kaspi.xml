@@ -2,42 +2,142 @@
 <kaspi_catalog 
     xmlns="http://kaspi.kz/kaspishopping"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    date="2025-12-11 15:39:36"
+    date="2025-12-11 16:40:00"
     xsi:schemaLocation="http://kaspi.kz/kaspishopping http://kaspi.kz/kaspishopping.xsd">
 
-    <company>NEMO-KZ</company>
-    <merchantid>Nemo</merchantid>
+  <company>NEMO-KZ-TEST</company>
+  <merchantid>Nemo-Tester</merchantid>
 
-    <offers>
-        <offer sku="УТ-00005947">
-            <model>Ноутбук Firebat U6B-IG8B16Q8</model>
+  <offers>
 
-            <availabilities>
-                <availability storeId="PP1" available="yes" stockCount="4"/>
-                <availability storeId="PP2" available="no" stockCount="0"/>
-                <availability storeId="PP3" available="no" stockCount="0"/>
-                <availability storeId="PP4" available="no" stockCount="0"/>
-                <availability storeId="PP5" available="yes" stockCount="3"/>
-                <availability storeId="PP6" available="no" stockCount="0"/>
-                <availability storeId="PP7" available="no" stockCount="0"/>
-                <availability storeId="PP10" available="no" stockCount="0"/>
-                <availability storeId="PP11" available="no" stockCount="0"/>
-                <availability storeId="PP13" available="no" stockCount="0"/>
-                <availability storeId="PP14" available="no" stockCount="0"/>
-            </availabilities>
+    <!-- 1) Normal (control) offer -->
+    <offer sku="TEST-000-CTRL">
+      <model>Control Laptop Model A</model>
+      <availabilities>
+        <availability storeId="PP1" available="yes" stockCount="5"/>
+      </availabilities>
+      <cityprices>
+        <cityprice cityId="710000000">100000</cityprice>
+      </cityprices>
+      <description>Control product — no payload</description>
+    </offer>
 
-            <cityprices>
-                <cityprice cityId="710000000">368399</cityprice>
-                <cityprice cityId="750000000">368399</cityprice>
-                <cityprice cityId="351010000">368399</cityprice>
-                <cityprice cityId="551010000">368399</cityprice>
-                <cityprice cityId="631010000">368399</cityprice>
-                <cityprice cityId="511010000">368399</cityprice>
-                <cityprice cityId="151010000">368399</cityprice>
-                <cityprice cityId="391010000">368399</cityprice>
-                <cityprice cityId="632810000">368399</cityprice>
-            </cityprices>
+    <!-- 2) XSS-like payload in CDATA (safe: kept as character data) -->
+    <offer sku="TEST-001-XSS-CDATA">
+      <model>Test XSS CDATA</model>
+      <availabilities>
+        <availability storeId="PP1" available="yes" stockCount="1"/>
+      </availabilities>
+      <cityprices>
+        <cityprice cityId="710000000">111111</cityprice>
+      </cityprices>
+      <description><![CDATA[
+        This description contains what looks like an XSS vector, but is wrapped in CDATA:
+        <script>alert('TEST_XSS')</script>
+      ]]></description>
+    </offer>
 
-        </offer>
-    </offers>
+    <!-- 3) XSS-like payload as escaped text (server should escape/render safely) -->
+    <offer sku="TEST-002-XSS-ESCAPED">
+      <model>Test XSS Escaped</model>
+      <availabilities>
+        <availability storeId="PP1" available="yes" stockCount="2"/>
+      </availabilities>
+      <cityprices>
+        <cityprice cityId="710000000">222222</cityprice>
+      </cityprices>
+      <!-- Here script tags are provided as raw text; a secure output should escape these -->
+      <description>&lt;script&gt;alert('TEST_XSS_ESCAPED')&lt;/script&gt;</description>
+    </offer>
+
+    <!-- 4) SQL-like payload in model (text only) -->
+    <offer sku="TEST-003-SQL-LIKE">
+      <model>InjectionTest' OR '1'='1</model>
+      <availabilities>
+        <availability storeId="PP1" available="yes" stockCount="3"/>
+      </availabilities>
+      <cityprices>
+        <cityprice cityId="710000000">333333</cityprice>
+      </cityprices>
+      <description>SQL-like string in model field to test backend parameterization / logging.</description>
+    </offer>
+
+    <!-- 5) SQL-like payload with INSERT-like text (harmless textual check) -->
+    <offer sku="TEST-004-SQL-INSERT-TEXT">
+      <model>Model INSERT TEXT</model>
+      <availabilities>
+        <availability storeId="PP1" available="yes" stockCount="1"/>
+      </availabilities>
+      <cityprices>
+        <cityprice cityId="710000000">444444</cityprice>
+      </cityprices>
+      <description>Example: INSERT INTO favorites (profile_id, favorite_product_uids) VALUES ('TESTER','{\"123\":\"123\"}')</description>
+    </offer>
+
+    <!-- 6) Special characters and CDATA -->
+    <offer sku="TEST-005-SPECIAL-CHARS">
+      <model>Special &amp; Chars &lt;&gt; " ' % $ @</model>
+      <availabilities>
+        <availability storeId="PP1" available="yes" stockCount="7"/>
+      </availabilities>
+      <cityprices>
+        <cityprice cityId="710000000">555555</cityprice>
+      </cityprices>
+      <description><![CDATA[ Special characters example: <tag> " ' & % $ @ TEST ]]></description>
+    </offer>
+
+    <!-- 7) Very long field (boundary test) -->
+    <offer sku="TEST-006-BOUNDARY">
+      <model>BoundaryTest</model>
+      <availabilities>
+        <availability storeId="PP1" available="yes" stockCount="1"/>
+      </availabilities>
+      <cityprices>
+        <cityprice cityId="710000000">666666</cityprice>
+      </cityprices>
+      <description>
+        <!-- 2000+ characters long string (truncated here for readability) -->
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. (repeat to reach required length...)
+      </description>
+    </offer>
+
+    <!-- 8) XXE illustration — COMMENTED OUT to avoid accidental parsing/execution.
+         If you want to test XXE behavior, discuss with backend/security and enable
+         only in a controlled parser that you manage. -->
+    <!--
+    <!DOCTYPE exploit [
+      <!ENTITY xxe SYSTEM "file:///etc/passwd">
+    ]>
+    <offer sku="TEST-007-XXE">
+      <model>XXE Test</model>
+      <description>&xxe;</description>
+    </offer>
+    -->
+
+    <!-- 9) JSON-like content inside XML (to test nested parsing) -->
+    <offer sku="TEST-008-JSON-IN-XML">
+      <model>JSON Inside</model>
+      <availabilities>
+        <availability storeId="PP1" available="yes" stockCount="2"/>
+      </availabilities>
+      <cityprices>
+        <cityprice cityId="710000000">777777</cityprice>
+      </cityprices>
+      <description>{"product":{"id":"TEST-008","meta":{"k":"v"}}}</description>
+    </offer>
+
+    <!-- 10) Control duplicate / encoding checks -->
+    <offer sku="TEST-009-ENCODING">
+      <model>Encoding Test — кириллица: Тестовый ноутбук</model>
+      <availabilities>
+        <availability storeId="PP1" available="yes" stockCount="9"/>
+      </availabilities>
+      <cityprices>
+        <cityprice cityId="710000000">888888</cityprice>
+      </cityprices>
+      <description>Проверка кодировки UTF-8: абвгдеёжз</description>
+    </offer>
+
+  </offers>
 </kaspi_catalog>
+
