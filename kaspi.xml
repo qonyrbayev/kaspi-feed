@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kaspi_catalog 
+    xmlns="http://kaspi.kz/kaspishopping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    date="2025-12-11 15:39:36"
+    xsi:schemaLocation="http://kaspi.kz/kaspishopping http://kaspi.kz/kaspishopping.xsd">
+
+    <company>NEMO-KZ</company>
+    <merchantid>Nemo</merchantid>
+
+    <offers>
+        <offer sku="УТ-00005947">
+            <model>Ноутбук Firebat U6B-IG8B16Q8</model>
+
+            <availabilities>
+                <availability storeId="PP1" available="yes" stockCount="4"/>
+                <availability storeId="PP2" available="no" stockCount="0"/>
+                <availability storeId="PP3" available="no" stockCount="0"/>
+                <availability storeId="PP4" available="no" stockCount="0"/>
+                <availability storeId="PP5" available="yes" stockCount="3"/>
+                <availability storeId="PP6" available="no" stockCount="0"/>
+                <availability storeId="PP7" available="no" stockCount="0"/>
+                <availability storeId="PP10" available="no" stockCount="0"/>
+                <availability storeId="PP11" available="no" stockCount="0"/>
+                <availability storeId="PP13" available="no" stockCount="0"/>
+                <availability storeId="PP14" available="no" stockCount="0"/>
+            </availabilities>
+
+            <cityprices>
+                <cityprice cityId="710000000">368399</cityprice>
+                <cityprice cityId="750000000">368399</cityprice>
+                <cityprice cityId="351010000">368399</cityprice>
+                <cityprice cityId="551010000">368399</cityprice>
+                <cityprice cityId="631010000">368399</cityprice>
+                <cityprice cityId="511010000">368399</cityprice>
+                <cityprice cityId="151010000">368399</cityprice>
+                <cityprice cityId="391010000">368399</cityprice>
+                <cityprice cityId="632810000">368399</cityprice>
+            </cityprices>
+
+        </offer>
+    </offers>
+</kaspi_catalog>
